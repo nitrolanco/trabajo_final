@@ -25,12 +25,6 @@ services:
     depends_on:
       - database
 
-  rabbitmq_server:
-    image: rabbitmq:latest
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-
   grpc_client:
     build:
       context: ./grpc_client
@@ -42,13 +36,6 @@ services:
       context: ./rest_client
     depends_on:
       - rest_server
-
-  rabbitmq_client:
-    build:
-      context: ./rabbitmq_client
-    depends_on:
-      - rabbitmq_server
-
   websocket_server:
     build:
       context: ./websocket_server
@@ -60,5 +47,15 @@ services:
       context: ./websocket_client
     depends_on:
       - websocket_server
+  rabbitmq_server:
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  rabbitmq_client:
+    build:
+      context: ./rabbitmq_client
+    depends_on:
+      - rabbitmq_server
 volumes:
   mongo-data:
