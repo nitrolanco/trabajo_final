@@ -9,6 +9,56 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=password
     volumes:
       - mongo-data:/data/db
+  grpc_server:
+    build:
+      context: ./grpc_server
+    ports:
+      - "50051:50051"
+    depends_on:
+      - database
 
+  rest_server:
+    build:
+      context: ./rest_server
+    ports:
+      - "5000:5000"
+    depends_on:
+      - database
+
+  rabbitmq_server:
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  grpc_client:
+    build:
+      context: ./grpc_client
+    depends_on:
+      - grpc_server
+
+  rest_client:
+    build:
+      context: ./rest_client
+    depends_on:
+      - rest_server
+
+  rabbitmq_client:
+    build:
+      context: ./rabbitmq_client
+    depends_on:
+      - rabbitmq_server
+
+  websocket_server:
+    build:
+      context: ./websocket_server
+    ports:
+      - "8080:8080"
+
+  websocket_client:
+    build:
+      context: ./websocket_client
+    depends_on:
+      - websocket_server
 volumes:
   mongo-data:
